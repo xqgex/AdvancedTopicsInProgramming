@@ -1,0 +1,121 @@
+Exercise 4 stands on its own and is not based on the code you implemented in your previous exercises (i.e. a fresh start, open a new project).
+
+In this exercise you are asked to implement some kind of template class and functions to support required usage. The story of the exercise relates to the Rock-Paper-Scissors game, but is not actually tied to the game - as you can see below.
+
+So, let's begin.
+
+You are required to implement a GameBoard template class with the following behavior:
+
+- GameBoard is a two dimensional board of size ROWS * COLS
+
+- ROWS and COLS should be template parameters (non-type template parameter)
+
+- GameBoard manages GAME_PIECEs for Players
+
+- GAME_PIECE should be a template parameter
+
+- User can use GAME_PIECE as a char, a String, a "Piece" object of some kind, a pointer to a "Piece" type of some kind - GameBoard doesn't care
+
+- Each position on the board (row, col) can hold a single GAME_PIECE or none
+
+- For each GAME_PIECE on board the GameBoard should manage who is the player owning this piece
+
+- GAME_PIECE itself doesn't manage the player it belongs to!
+
+- Player is managed by int (player number) starting from 0
+
+- Number of players is given to GameBoard as a template parameter, with default 2
+
+Here is an example creating a GameBoard of 5 rows, 10 cols, piece type as char and 2 players:
+
+GameBoard<5, 10, char> board1; 
+
+Here is an example creating a GameBoard of 12 rows, 7 cols, piece type as String and 4 players:
+
+GameBoard<12, 7, String, 4> board2; 
+
+-----
+
+Define the following type:
+
+template<typename GAME_PIECE>
+using PieceInfo = std::unique_ptr<const std::pair<int, GAME_PIECE>>;
+
+You are required to implement the following methods on GameBoard:
+
+[1] 
+
+PieceInfo<GAME_PIECE> getPiece(int row, int col); 
+
+Get the piece info for the piece in the requested location, or nullptr if no piece in this location.
+
+[2] 
+
+PieceInfo<GAME_PIECE> setPiece(int row, int col, GAME_PIECE piece, int player); 
+
+Method sets the piece into the board.
+It returns the piece info, for the piece that was previously in this location, or nullptr if there was no piece in this location.
+
+[3] 
+
+GameBoard should allow iterating over its content in several options:
+
+(a) 
+
+Iterating over all Pieces on board, getting the data as const std::tuple<int, int, GAME_PIECE, int> where the 1st int in the tuple is the row, 2nd is column and 4th is the player number.
+
+Example:
+
+for(auto pieceInfo : myBoard) {
+    cout << "row: " << std::get<0>(pieceInfo) << endl;
+    cout << "col: " << std::get<1>(pieceInfo) << endl;
+    cout << "piece: " << std::get<2>(pieceInfo) << endl; // we assume here that GAME_PIECE implemented <<
+    cout << "player: " << std::get<3>(pieceInfo) << endl;
+}
+
+The iteration shall go only through existing pieces. Order is important - here and in all other iterations below: loop through rows and in each row through columns (i.e. loop on all existing pieces in row 0, then on all existing pieces in row 1, then row 2 etc.).
+
+(b) 
+
+Iterating over all Pieces of a certain player, with the same return value as in (a) above:
+
+Example:
+
+int playerNum = 0;
+for(auto pieceInfo : myBoard.allPiecesOfPlayer(playerNum)) {
+    // same as in (a) above
+}
+
+(c) 
+
+Iterating over a certain Piece for all players, with the same return value as in (a) above:
+
+Example:
+
+char piece = 'J'; // we assume in this case that GAME_PIECE is char
+for(auto pieceInfo : myBoard.allOccureneceOfPiece(piece)) {
+    // same as in (a) above
+}
+
+A match for a piece is based on ==
+
+(d) 
+
+Iterating over a certain Piece for a certain player, with the same return value as in (a) above:
+
+Example:
+
+int playerNum = 0;
+char piece = 'J'; // we assume in this case that GAME_PIECE is char
+for(auto pieceInfo : myBoard.allOccureneceOfPieceForPlayer(piece, playerNum)) {
+    // same as in (a) above
+}
+
+
+Note 1: for all iterating requirements above you should NOT duplicate the data, run on the actual information that is in GameBoard without duplicating the data!
+
+
+Note 2: we will test your code with our own main! Exact instructions that would allow our main to compile with your code would follow in a separate entry in moodle. Mainly we would need to define the exact name of your header file and you would need to keep the exact name of the class and methods as set above.
+
+
+Good luck!
